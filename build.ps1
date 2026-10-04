@@ -104,7 +104,7 @@ if ($LASTEXITCODE -ne 0) { Write-Host "Build FAILED" -ForegroundColor Red; exit 
 Write-Host "OK: $Out" -ForegroundColor Green
 
 # ------------------------------------------------------------------ packages
-# dist\windows : BepInEx x86 (Windows and Steam Deck/Proton) + plugin
+# dist\windows : BepInEx x86 (Windows, and Linux / Steam Deck through Proton) + plugin
 # dist\macos   : BepInEx macOS (libdoorstop + run_bepinex.sh) + plugin
 # dist\plugin  : plugin only (for users who already have BepInEx 5)
 
@@ -123,7 +123,7 @@ $release = "release\v$Version"
 if (Test-Path $release) { Remove-Item $release -Recurse -Force }
 New-Item -ItemType Directory -Force $release | Out-Null
 $zips = [ordered]@{
-    "windows" = "OC2ControllerIcons_v$Version-Windows_SteamDeck.zip"
+    "windows" = "OC2ControllerIcons_v$Version-Windows_Linux.zip"
     "macos"   = "OC2ControllerIcons_v$Version-macOS.zip"
     "plugin"  = "OC2ControllerIcons_v$Version-PluginOnly.zip"
 }

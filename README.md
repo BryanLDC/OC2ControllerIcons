@@ -24,22 +24,23 @@ patch is applied independently so a future game update can only disable the part
 
 | Platform | Package | Status |
 |---|---|---|
-| Windows | `Windows_SteamDeck` | Tested |
-| Steam Deck (Proton) | `Windows_SteamDeck` + launch option | Expected to work |
+| Windows | `Windows_Linux` | Tested |
+| Linux / Steam Deck (Proton) | `Windows_Linux` + launch option | Expected to work |
 | macOS (native build) | `macOS` | Expected to work |
 | Existing BepInEx 5 setup | `PluginOnly` | — |
 
 ## Installation
 
 Download the package for your platform from the releases page and follow
-[`docs/README_EN.txt`](docs/README_EN.txt) — it covers Windows, Steam Deck, macOS,
+[`docs/README_EN.txt`](docs/README_EN.txt) — it covers Windows, Linux / Steam Deck, macOS,
 configuration and uninstallation step by step.
 
-Quick start (Windows): extract `OC2ControllerIcons_v3.0.0-Windows_SteamDeck.zip` into the
+Quick start (Windows): extract `OC2ControllerIcons_v3.0.0-Windows_Linux.zip` into the
 game folder (next to `Overcooked2.exe`), start the game and enable the mod in
 **Settings › Game › CONTROLLER LAYOUTS**.
 
-Steam Deck needs this launch option:
+Overcooked! 2 has no native Linux build: on Linux and Steam Deck the Windows version runs
+through Proton, which needs this launch option:
 
 ```
 WINEDLLOVERRIDES="winhttp=n,b" %command%

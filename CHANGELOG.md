@@ -15,7 +15,7 @@ First public release.
 - Player-select cards show each player's controller; Nintendo uses a Pro Controller silhouette.
 - Native *CONTROLLER LAYOUTS* section in Settings › Game with Save/Discard support.
 - UI strings in the game's 12 languages.
-- Release packages for Windows / Steam Deck, macOS and plugin-only installs.
+- Release packages for Windows / Linux (Proton, incl. Steam Deck), macOS and plugin-only installs.
 - Build script with automatic game detection and BepInEx download.
 
 ### Changed

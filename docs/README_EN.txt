@@ -1,5 +1,5 @@
 ==============================================================================
- OC2 Controller Icons  v3.0.0  -  Overcooked! 2 (Steam, PC / Steam Deck / Mac)
+ OC2 Controller Icons  v3.0.0  -  Overcooked! 2 (Steam: Windows / Linux / Mac)
 ==============================================================================
 
 Universal controller icons for Overcooked! 2. Play with Xbox, PlayStation or
@@ -19,8 +19,10 @@ The mod is installed DISABLED. Turn it on from the in-game Settings menu.
 ------------------------------------------------------------------------------
  WHICH FILE DO I NEED?
 ------------------------------------------------------------------------------
-  OC2ControllerIcons_v3.0.0-Windows_SteamDeck.zip
-      Windows PC and Steam Deck. Includes BepInEx 5 (x86 - the game is 32-bit).
+  OC2ControllerIcons_v3.0.0-Windows_Linux.zip
+      Windows, and Linux / Steam Deck (the game has no native Linux build: it
+      runs the Windows version through Proton). Includes BepInEx 5 (x86 - the
+      game is 32-bit).
 
   OC2ControllerIcons_v3.0.0-macOS.zip
       Mac (native Mac version of the game). Includes BepInEx 5 for macOS.
@@ -33,7 +35,7 @@ The mod is installed DISABLED. Turn it on from the in-game Settings menu.
  FIND THE GAME FOLDER
 ------------------------------------------------------------------------------
   Steam > Library > right-click "Overcooked! 2" > Manage > Browse local files.
-  It is the folder that contains "Overcooked2.exe" (Windows / Steam Deck) or
+  It is the folder that contains "Overcooked2.exe" (Windows / Linux / Steam Deck) or
   "Overcooked2.app" (Mac).
 
 
@@ -41,24 +43,27 @@ The mod is installed DISABLED. Turn it on from the in-game Settings menu.
  INSTALL - WINDOWS
 ------------------------------------------------------------------------------
   1. Close the game.
-  2. Extract the Windows_SteamDeck zip INTO the game folder (next to
+  2. Extract the Windows_Linux zip INTO the game folder (next to
      Overcooked2.exe). Say "yes" if asked to merge folders.
   3. Start the game normally from Steam.
 
 
 ------------------------------------------------------------------------------
- INSTALL - STEAM DECK
+ INSTALL - LINUX / STEAM DECK (Proton)
 ------------------------------------------------------------------------------
-  1. Switch to Desktop Mode.
-  2. Extract the Windows_SteamDeck zip INTO the game folder (next to
-     Overcooked2.exe). The "Ark" app that comes with the Deck can do it.
+  The game has no native Linux build; Steam runs the Windows version through
+  Proton, so the Windows_Linux package is used.
+
+  1. Close the game. (Steam Deck: switch to Desktop Mode.)
+  2. Extract the Windows_Linux zip INTO the game folder (next to
+     Overcooked2.exe). On Steam Deck the "Ark" app can do it.
   3. In Steam: right-click "Overcooked! 2" > Properties > General >
      Launch Options, and paste exactly:
 
          WINEDLLOVERRIDES="winhttp=n,b" %command%
 
      (Without this line Proton ignores BepInEx and the mod will not load.)
-  4. Go back to Gaming Mode and play.
+  4. Start the game (Steam Deck: Gaming Mode works too).
 
 
 ------------------------------------------------------------------------------
@@ -129,14 +134,14 @@ The mod is installed DISABLED. Turn it on from the in-game Settings menu.
     Delete the folder  BepInEx/plugins/OC2ControllerIcons
     (optional) delete  BepInEx/config/com.oc2mods.controllericons.cfg
 
-  Remove everything - Windows / Steam Deck (game folder):
+  Remove everything - Windows / Linux / Steam Deck (game folder):
     BepInEx/            (folder)
     winhttp.dll
     doorstop_config.ini
     .doorstop_version
     changelog.txt
     OC2ControllerIcons_README.txt
-    Steam Deck: also clear the Launch Options line.
+    Linux / Steam Deck: also clear the Launch Options line.
 
   Remove everything - Mac (game folder):
     BepInEx/            (folder)
