@@ -1,0 +1,30 @@
+OC2 Controller Icons - Third-party notices
+=========================================
+
+The Windows/Linux and macOS packages of OC2 Controller Icons bundle the
+following unmodified third-party components. Each one is distributed under
+its own license, included in this folder. Source code is available at the
+links below.
+
+Component       Files                                     License       Source
+---------------------------------------------------------------------------------------------------------
+BepInEx 5.4.23  BepInEx/core/BepInEx*.dll,                LGPL-2.1      https://github.com/BepInEx/BepInEx
+                HarmonyXInterop.dll, changelog.txt
+UnityDoorstop   winhttp.dll, doorstop_config.ini          LGPL-2.1      https://github.com/NeighTools/UnityDoorstop
+                (Windows); libdoorstop.dylib,
+                run_bepinex.sh (macOS)
+HarmonyX        BepInEx/core/0Harmony*.dll                MIT           https://github.com/BepInEx/HarmonyX
+MonoMod         BepInEx/core/MonoMod.*.dll                MIT           https://github.com/MonoMod/MonoMod
+Mono.Cecil      BepInEx/core/Mono.Cecil*.dll              MIT           https://github.com/jbevain/cecil
+
+The binaries are the official BepInEx 5.4.23.2 release builds, taken from
+https://github.com/BepInEx/BepInEx/releases/tag/v5.4.23.2 without changes.
+You may replace them with your own builds of the same components.
+
+License files in this folder:
+  BepInEx.LICENSE.txt               GNU Lesser General Public License v2.1
+  UnityDoorstop.LICENSE.txt         GNU Lesser General Public License v2.1
+  HarmonyX.LICENSE.txt              MIT
+  MonoMod.LICENSE.txt               MIT
+  Mono.Cecil.LICENSE.txt            MIT
+  OC2ControllerIcons.LICENSE.txt    MIT (this mod)

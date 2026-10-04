@@ -115,9 +115,18 @@ foreach ($p in @("windows", "macos", "plugin")) {
     New-Item -ItemType Directory -Force "$dist\$p\$plugDir" | Out-Null
     Copy-Item $Out "$dist\$p\$plugDir\" -Force
     Copy-Item "docs\README_EN.txt" "$dist\$p\OC2ControllerIcons_README.txt" -Force
+    Copy-Item "LICENSE" "$dist\$p\$plugDir\LICENSE.txt" -Force
 }
 Copy-Item "$bepWindows\*" "$dist\windows\" -Recurse -Force
 Copy-Item "$bepMac\*"     "$dist\macos\"   -Recurse -Force
+
+# License notices for the bundled third-party components (BepInEx, Doorstop, HarmonyX...).
+foreach ($p in @("windows", "macos")) {
+    $lic = "$dist\$p\BepInEx\licenses"
+    New-Item -ItemType Directory -Force $lic | Out-Null
+    Copy-Item "docs\licenses\*" $lic -Force
+    Copy-Item "LICENSE" "$lic\OC2ControllerIcons.LICENSE.txt" -Force
+}
 
 $release = "release\v$Version"
 if (Test-Path $release) { Remove-Item $release -Recurse -Force }

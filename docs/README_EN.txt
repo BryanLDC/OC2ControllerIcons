@@ -171,6 +171,8 @@ The mod is installed DISABLED. Turn it on from the in-game Settings menu.
 ------------------------------------------------------------------------------
   BepInEx  - https://github.com/BepInEx/BepInEx  (LGPL-2.1)
   HarmonyX - https://github.com/BepInEx/HarmonyX (MIT)
+  Full third-party notices and license texts: BepInEx/licenses/
+  (Windows/Linux and macOS packages). This mod: MIT License.
   Generic icons and the Pro Controller silhouette are original art made for
   this mod. Controller diagrams are generated at runtime from the game's own
   images - no game assets are redistributed.

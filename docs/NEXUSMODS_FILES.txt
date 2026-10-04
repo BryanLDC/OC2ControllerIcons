@@ -1,0 +1,37 @@
+NEXUS MODS - "Add file" form, one block per zip (first upload, v3.0.0)
+=====================================================================
+
+--- 1) OC2ControllerIcons_v3.0.0-Windows_Linux.zip ---------------------
+File category ......... Main
+Display name .......... OC2 Controller Icons - Windows and Linux (with BepInEx)
+File version .......... 3.0.0
+Update mod version .... [x] checked
+Description (<=255) ... Windows, plus Linux / Steam Deck via Proton. BepInEx 5 (x86) included. Extract into the game folder. Linux/Steam Deck: set launch option WINEDLLOVERRIDES="winhttp=n,b" %command%
+Set as primary file ... [x] checked
+Requirements popup .... [ ] unchecked
+Changelog entry (one line each):
+  Universal "four circles" button prompts in all menus
+  Unbranded controller diagrams on the Controls screens
+  Per-player in-game prompts: Xbox, PlayStation, Nintendo or Generic
+  Player-select cards show each player's controller
+  CONTROLLER LAYOUTS section in Settings > Game, 12 languages
+
+--- 2) OC2ControllerIcons_v3.0.0-macOS.zip -----------------------------
+File category ......... Main
+Display name .......... OC2 Controller Icons - macOS (with BepInEx)
+File version .......... 3.0.0
+Update mod version .... [x] checked
+Description (<=255) ... Native macOS version of the game. BepInEx 5 for macOS included. Extract next to Overcooked2.app, run chmod +x run_bepinex.sh and set the Steam launch option (see README). Untested - feedback welcome.
+Set as primary file ... [ ] unchecked
+Requirements popup .... [ ] unchecked
+Changelog entry ....... (same lines as file 1)
+
+--- 3) OC2ControllerIcons_v3.0.0-PluginOnly.zip ------------------------
+File category ......... Optional
+Display name .......... OC2 Controller Icons - Plugin only (BepInEx 5 required)
+File version .......... 3.0.0
+Update mod version .... [x] checked
+Description (<=255) ... Only the mod DLL, for users who already have BepInEx 5 installed (x86 on Windows/Linux). Extract into the game folder.
+Set as primary file ... [ ] unchecked
+Requirements popup .... [x] checked  (add BepInEx as a requirement on the mod page first)
+Changelog entry ....... (same lines as file 1)
