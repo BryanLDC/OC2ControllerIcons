@@ -1,0 +1,143 @@
+==============================================================================
+ NEXUS MODS PAGE - copy/paste helper
+==============================================================================
+
+MOD NAME
+  OC2 Controller Icons - Universal & Per-Player Button Prompts
+
+VERSION
+  3.0.0
+
+CATEGORY / TAGS
+  User Interface, Controllers, Quality of Life, Multiplayer, Local Co-op
+
+SHORT SUMMARY (max ~350 characters)
+  Play Overcooked! 2 with Xbox, PlayStation or Nintendo controllers - or a mix -
+  and see the right buttons. Menus get universal "four circles" prompts,
+  controls screens show an unbranded controller, and in-game prompts use each
+  player's own layout. Configured from the in-game Settings menu. 12 languages.
+
+REQUIREMENTS
+  BepInEx 5 (included in the Windows/Steam Deck and macOS downloads)
+
+FILES TO UPLOAD (Main files)
+  OC2ControllerIcons_v3.0.0-Windows_SteamDeck.zip  - "Windows / Steam Deck (with BepInEx)"
+  OC2ControllerIcons_v3.0.0-macOS.zip              - "macOS (with BepInEx)"
+  OC2ControllerIcons_v3.0.0-PluginOnly.zip         - "Plugin only (BepInEx 5 already installed)"
+
+
+==============================================================================
+ DESCRIPTION (paste into the Nexus description box)
+==============================================================================
+
+[size=5][b]OC2 Controller Icons[/b][/size]
+
+On PC, Overcooked! 2 always shows Xbox buttons, no matter which controller you
+use. This mod fixes that - and it works for couch co-op where every player
+uses a different controller.
+
+[size=4][b]Features[/b][/size]
+[list]
+[*][b]Universal menu prompts[/b] - every button prompt in menus becomes a
+layout-agnostic icon: four circles (top / left / right / bottom) with the one
+you must press filled in. Works for Xbox, PlayStation and Nintendo players at
+the same time. Bumpers, triggers and sticks follow the same idea.
+[*][b]Unbranded controls screens[/b] - the controller diagrams (Settings >
+Controls and the pause menu) show a generic controller: no Xbox logo, empty
+face buttons.
+[*][b]Per-player in-game prompts[/b] - tutorial and kitchen prompts ("pick
+up", "chop"...) use the layout chosen for each player: Xbox, PlayStation,
+Nintendo or Generic. Shared prompts follow the chef standing closest to them.
+Nintendo shows the correct physical button (bottom = B).
+[*][b]Player select cards[/b] show each player's controller type (Xbox,
+DualShock or Pro Controller silhouette).
+[*][b]Native settings[/b] - a "CONTROLLER LAYOUTS" section at the bottom of
+Settings > Game, with the game's own look, navigation, Save/Discard dialog.
+[*][b]12 languages[/b] - follows the game language.
+[*][b]Safe[/b] - no game files or save files are modified. Disabled by default.
+[/list]
+
+[size=4][b]Installation[/b][/size]
+Find the game folder: Steam > right-click Overcooked! 2 > Manage > Browse local files.
+
+[b]Windows[/b]
+[list=1]
+[*]Download [i]Windows_SteamDeck[/i] and extract it into the game folder (next to Overcooked2.exe).
+[*]Start the game from Steam.
+[/list]
+
+[b]Steam Deck[/b]
+[list=1]
+[*]In Desktop Mode, extract [i]Windows_SteamDeck[/i] into the game folder (next to Overcooked2.exe).
+[*]Steam > Overcooked! 2 > Properties > Launch Options:
+[code]WINEDLLOVERRIDES="winhttp=n,b" %command%[/code]
+[*]Play (Gaming Mode works too).
+[/list]
+
+[b]Mac[/b]
+[list=1]
+[*]Extract [i]macOS[/i] into the game folder (next to Overcooked2.app).
+[*]In Terminal, inside the game folder: [code]chmod +x run_bepinex.sh[/code]
+[*]Steam > Overcooked! 2 > Properties > Launch Options:
+[code]"$HOME/Library/Application Support/Steam/steamapps/common/Overcooked! 2/run_bepinex.sh" %command%[/code]
+[*]If macOS blocks libdoorstop.dylib, allow it in System Settings > Privacy & Security
+(or run [code]xattr -dr com.apple.quarantine .[/code] in the game folder).
+[/list]
+
+[b]Already using BepInEx 5?[/b] Download [i]PluginOnly[/i] and extract it into the game folder.
+
+[size=4][b]How to enable[/b][/size]
+[list=1]
+[*]Main menu > Settings > Game.
+[*]Scroll to the bottom, section [b]CONTROLLER LAYOUTS[/b].
+[*]"Universal controller icons" > [b]On[/b].
+[*]"Player 1-4 controller" > Xbox / PlayStation / Nintendo / Generic (default: Xbox).
+[*]Press [b]Save[/b].
+[/list]
+Player numbers match the slots on the player-select screen. Keyboard players
+keep seeing keyboard keys. Online, only your own screen is affected.
+
+[size=4][b]Uninstall[/b][/size]
+[list]
+[*][b]Just turn it off:[/b] Settings > Game > Universal controller icons > Off.
+[*][b]Remove the mod only:[/b] delete [i]BepInEx/plugins/OC2ControllerIcons[/i]
+(and optionally [i]BepInEx/config/com.oc2mods.controllericons.cfg[/i]).
+[*][b]Remove everything (Windows / Steam Deck):[/b] delete [i]BepInEx[/i],
+[i]winhttp.dll[/i], [i]doorstop_config.ini[/i], [i].doorstop_version[/i],
+[i]changelog.txt[/i], [i]OC2ControllerIcons_README.txt[/i]. On Steam Deck also
+clear the Launch Options.
+[*][b]Remove everything (Mac):[/b] delete [i]BepInEx[/i], [i]libdoorstop.dylib[/i],
+[i]run_bepinex.sh[/i], [i].doorstop_version[/i], [i]changelog.txt[/i],
+[i]OC2ControllerIcons_README.txt[/i] and clear the Launch Options.
+[/list]
+Your game and saves stay exactly as they were.
+
+[size=4][b]Compatibility[/b][/size]
+[list]
+[*]Steam version of Overcooked! 2 (all DLCs).
+[*]Tested on Windows. Steam Deck (Proton) and macOS use the official BepInEx
+loaders for those platforms; feedback is welcome.
+[*]Each part of the mod loads independently: if a future game update breaks
+one feature, the rest keeps working (see BepInEx/LogOutput.log).
+[/list]
+
+[size=4][b]Credits[/b][/size]
+[list]
+[*][url=https://github.com/BepInEx/BepInEx]BepInEx[/url] (LGPL-2.1) and
+[url=https://github.com/BepInEx/HarmonyX]HarmonyX[/url] (MIT).
+[*]Generic icons and Pro Controller silhouette: original art made for this mod.
+Controller diagrams are generated at runtime from the game's own images -
+no game assets are redistributed.
+[/list]
+
+
+==============================================================================
+ CHANGELOG (paste into the "Changelog" tab)
+==============================================================================
+3.0.0
+  - Universal "four circles" prompts in all menus.
+  - Unbranded controller diagrams on the Controls screens.
+  - Per-player layouts for in-game prompts: Xbox / PlayStation / Nintendo / Generic.
+  - Player-select cards show each player's controller (Pro Controller for Nintendo).
+  - Settings integrated in Settings > Game ("CONTROLLER LAYOUTS"), 12 languages.
+  - Windows / Steam Deck and macOS packages.
