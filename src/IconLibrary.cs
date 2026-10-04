@@ -156,18 +156,49 @@ namespace OC2ControllerIcons
                 layout = PadLayout.Xbox; // the D-pad has no generic version: use the game's icon
             }
             if (lookup == null || !InitReflection()) return null;
+            LogMissingIconsOnce(lookup);
+
+            // Requested style first, then the other style of the SAME layout. Never another
+            // brand: returns null if this layout has no icon for the button.
+            ControllerIconLookup.IconContext other = context == ControllerIconLookup.IconContext.Borderless
+                ? ControllerIconLookup.IconContext.Bordered : ControllerIconLookup.IconContext.Borderless;
+            Sprite sprite = ReadLayout(lookup, context, layout, button);
+            if (sprite == null) sprite = ReadLayout(lookup, other, layout, button);
+            return sprite;
+        }
+
+        private static Sprite ReadLayout(ControllerIconLookup lookup, ControllerIconLookup.IconContext context,
+                                         PadLayout layout, ControlPadInput.Button button)
+        {
             object set = (context == ControllerIconLookup.IconContext.Borderless ? s_borderlessField : s_borderedField).GetValue(lookup);
             if (set == null) return null;
+            if (layout == PadLayout.Nintendo)
+                return (object)s_setNX != null ? ReadSprite(s_setNX.GetValue(set), s_nxIconsFields, NintendoField(button)) : null;
+            if (layout == PadLayout.PlayStation)
+                return (object)s_setPS4 != null ? ReadSprite(s_setPS4.GetValue(set), s_buttonIconsFields, StandardField(button)) : null;
+            return ReadSprite(s_setXbox.GetValue(set), s_buttonIconsFields, StandardField(button));
+        }
 
-            Sprite sprite = null;
-            if (layout == PadLayout.Nintendo && (object)s_setNX != null)
-                sprite = ReadSprite(s_setNX.GetValue(set), s_nxIconsFields, NintendoField(button));
-            else if (layout == PadLayout.PlayStation && (object)s_setPS4 != null)
-                sprite = ReadSprite(s_setPS4.GetValue(set), s_buttonIconsFields, StandardField(button));
+        private static bool s_loggedMissing;
 
-            if (sprite == null) // Xbox, or the requested layout has no icon for this button
-                sprite = ReadSprite(s_setXbox.GetValue(set), s_buttonIconsFields, StandardField(button));
-            return sprite;
+        // One-time diagnostic: which PlayStation / Nintendo face icons the game lacks per style.
+        private static void LogMissingIconsOnce(ControllerIconLookup lookup)
+        {
+            if (s_loggedMissing) return;
+            s_loggedMissing = true;
+            ControlPadInput.Button[] face = { ControlPadInput.Button.A, ControlPadInput.Button.B, ControlPadInput.Button.X, ControlPadInput.Button.Y };
+            string missing = "";
+            foreach (ControllerIconLookup.IconContext ctx in new ControllerIconLookup.IconContext[] { ControllerIconLookup.IconContext.Bordered, ControllerIconLookup.IconContext.Borderless })
+            {
+                foreach (PadLayout l in new PadLayout[] { PadLayout.PlayStation, PadLayout.Nintendo })
+                {
+                    for (int i = 0; i < face.Length; i++)
+                    {
+                        if (ReadLayout(lookup, ctx, l, face[i]) == null) missing += " " + l + "/" + ctx + "/" + face[i];
+                    }
+                }
+            }
+            if (missing.Length > 0) Plugin.Log.LogInfo("Game icon sets without these face buttons (other style used instead):" + missing);
         }
 
         private static Sprite ReadSprite(object pack, Dictionary<string, FieldInfo> fields, string name)
@@ -274,7 +305,8 @@ namespace OC2ControllerIcons
                 SemanticToLogical(semantic), player, device);
             if (!button.HasValue) return null;
 
-            return GetForLayout(lookup, button.Value, context, ModSettings.GetLayout(PlayerSlot(player)));
+            Sprite sprite = GetForLayout(lookup, button.Value, context, ModSettings.GetLayout(PlayerSlot(player)));
+            return sprite != null ? sprite : GetForLayout(lookup, button.Value, context, PadLayout.Xbox);
         }
     }
 }

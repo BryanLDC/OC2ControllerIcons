@@ -1,5 +1,5 @@
 ==============================================================================
- OC2 Controller Icons  v3.0.0  -  Overcooked! 2 (Steam: Windows / Linux / Mac)
+ OC2 Controller Icons  v3.1.0  -  Overcooked! 2 (Steam: Windows / Linux / Mac)
 ==============================================================================
 
 Universal controller icons for Overcooked! 2. Play with Xbox, PlayStation or
@@ -7,8 +7,11 @@ Nintendo controllers (or a mix of them) and see the right buttons:
 
   * Menus: every button prompt becomes a layout-agnostic icon - four circles
     (top / left / right / bottom) with the button you must press filled in.
+    If every joined player uses the same layout, menus show that layout's real
+    buttons instead (e.g. everyone on PlayStation -> PlayStation buttons).
   * Controls screens: the controller diagrams show an unbranded controller
-    (no logo, empty face buttons).
+    (no logo, empty face buttons). With a shared layout they show the game's
+    Xbox or PlayStation diagram, or Nintendo button icons.
   * In-game prompts (tutorial, "pick up", "chop"...): each player sees the
     buttons of THEIR controller (Xbox / PlayStation / Nintendo / Generic).
   * Player select: each player's card shows their controller type.
@@ -19,15 +22,15 @@ The mod is installed DISABLED. Turn it on from the in-game Settings menu.
 ------------------------------------------------------------------------------
  WHICH FILE DO I NEED?
 ------------------------------------------------------------------------------
-  OC2ControllerIcons_v3.0.0-Windows_Linux.zip
+  OC2ControllerIcons_v3.1.0-Windows_Linux.zip
       Windows, and Linux / Steam Deck (the game has no native Linux build: it
       runs the Windows version through Proton). Includes BepInEx 5 (x86 - the
       game is 32-bit).
 
-  OC2ControllerIcons_v3.0.0-macOS.zip
+  OC2ControllerIcons_v3.1.0-macOS.zip
       Mac (native Mac version of the game). Includes BepInEx 5 for macOS.
 
-  OC2ControllerIcons_v3.0.0-PluginOnly.zip
+  OC2ControllerIcons_v3.1.0-PluginOnly.zip
       Only the mod. For people who ALREADY have BepInEx 5 installed.
 
 
@@ -103,7 +106,8 @@ The mod is installed DISABLED. Turn it on from the in-game Settings menu.
  HOW TO TURN IT ON / CONFIGURE
 ------------------------------------------------------------------------------
   1. Start the game. On the main menu go to  Settings > Game  (Ajustes > Juego).
-  2. Scroll to the bottom: section "CONTROLLER LAYOUTS".
+  2. Scroll to the bottom: section "CONTROLLER LAYOUTS". It shows how many
+     players are detected and one row per joined player.
   3. "Universal controller icons"  ->  On.
   4. "Player 1..4 controller"  ->  Xbox / PlayStation / Nintendo / Generic
         (default: Xbox for everyone)
@@ -118,6 +122,8 @@ The mod is installed DISABLED. Turn it on from the in-game Settings menu.
 
   Good to know:
   - "Player N" is the slot in the player-select screen.
+  - A controller that joins later (and was not there when you saved) gets the
+    most common layout of the other players; on a tie, Player 1's layout.
   - Prompts that float over kitchen objects are shared by everyone, so they
     use the layout of the chef standing closest to that object.
   - Keyboard players keep seeing keyboard keys.

@@ -6,7 +6,7 @@ MOD NAME
   OC2 Controller Icons - Universal & Per-Player Button Prompts
 
 VERSION
-  3.0.0
+  3.1.0
 
 CATEGORY / TAGS
   User Interface, Controllers, Quality of Life, Multiplayer, Local Co-op
@@ -21,9 +21,9 @@ REQUIREMENTS
   BepInEx 5 (included in the Windows/Linux and macOS downloads)
 
 FILES TO UPLOAD (Main files)
-  OC2ControllerIcons_v3.0.0-Windows_Linux.zip      - "Windows / Linux / Steam Deck (with BepInEx)"
-  OC2ControllerIcons_v3.0.0-macOS.zip              - "macOS (with BepInEx)"
-  OC2ControllerIcons_v3.0.0-PluginOnly.zip         - "Plugin only (BepInEx 5 already installed)"
+  OC2ControllerIcons_v3.1.0-Windows_Linux.zip      - "Windows / Linux / Steam Deck (with BepInEx)"
+  OC2ControllerIcons_v3.1.0-macOS.zip              - "macOS (with BepInEx)"
+  OC2ControllerIcons_v3.1.0-PluginOnly.zip         - "Plugin only (BepInEx 5 already installed)"
 
 
 ==============================================================================
@@ -42,9 +42,12 @@ uses a different controller.
 layout-agnostic icon: four circles (top / left / right / bottom) with the one
 you must press filled in. Works for Xbox, PlayStation and Nintendo players at
 the same time. Bumpers, triggers and sticks follow the same idea.
+If every joined player picks the same layout, menus show that layout's real
+buttons instead.
 [*][b]Unbranded controls screens[/b] - the controller diagrams (Settings >
 Controls and the pause menu) show a generic controller: no Xbox logo, empty
-face buttons.
+face buttons. With a shared layout they show the game's Xbox or PlayStation
+diagram, or Nintendo button icons.
 [*][b]Per-player in-game prompts[/b] - tutorial and kitchen prompts ("pick
 up", "chop"...) use the layout chosen for each player: Xbox, PlayStation,
 Nintendo or Generic. Shared prompts follow the chef standing closest to them.
@@ -135,6 +138,17 @@ no game assets are redistributed.
 ==============================================================================
  CHANGELOG (paste into the "Changelog" tab)
 ==============================================================================
+3.1.0
+  - Menus show the real Xbox / PlayStation / Nintendo buttons when every joined
+    player uses the same layout; generic icons are used only for mixed layouts.
+  - Controls screens follow the shared layout (Xbox / PlayStation diagrams,
+    Nintendo button icons).
+  - CONTROLLER LAYOUTS shows the number of players detected and only their rows.
+  - A controller joining later gets the most common layout (tie: Player 1's).
+  - Keyboard players no longer affect the "same layout" check.
+  - "Press [button] to join locally" always shows the generic icon.
+  - Fixed: the "rejoin" popup always showed Xbox A.
+
 3.0.0
   - Universal "four circles" prompts in all menus.
   - Unbranded controller diagrams on the Controls screens.

@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 namespace OC2ControllerIcons.Patches
 {
-    // Replaces known controller diagrams with their generic version in any UI Image
-    // (see DiagramGenericizer). Covers sprites assigned from code (setter) as well as
-    // sprites serialized in prefabs (OnEnable).
+    // Swaps known controller diagrams on any UI Image for the version that matches the
+    // current settings (see DiagramGenericizer.Resolve). Covers sprites assigned from code
+    // (setter) as well as sprites serialized in prefabs (OnEnable).
     public static class DiagramSpritePatch
     {
         public static void Apply(Harmony harmony)
@@ -21,20 +21,17 @@ namespace OC2ControllerIcons.Patches
 
         private static void SetSpritePrefix(ref Sprite value)
         {
-            if (value == null) return;
-            if (ModSettings.Enabled) value = DiagramGenericizer.Map(value);
-            else if (DiagramGenericizer.IsGenerated(value)) value = DiagramGenericizer.GetOriginal(value);
+            if (value != null) value = DiagramGenericizer.Resolve(value);
         }
 
         private static void OnEnablePostfix(MaskableGraphic __instance)
         {
-            if (!ModSettings.Enabled) return;
             Image image = __instance as Image;
             if (image == null) return;
             Sprite current = image.sprite;
             if (current == null) return;
-            Sprite mapped = DiagramGenericizer.Map(current);
-            if (mapped != current) image.sprite = mapped;
+            Sprite target = DiagramGenericizer.Resolve(current);
+            if (target != current) image.sprite = target;
         }
 
         private static void RefreshAll()
@@ -48,8 +45,7 @@ namespace OC2ControllerIcons.Patches
                 if (s == null) continue;
                 try
                 {
-                    // The patched setter decides whether to apply the generic or the original sprite.
-                    Sprite target = ModSettings.Enabled ? DiagramGenericizer.Map(s) : DiagramGenericizer.GetOriginal(s);
+                    Sprite target = DiagramGenericizer.Resolve(s);
                     if (target != s) img.sprite = target;
                 }
                 catch (Exception)

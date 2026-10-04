@@ -4,6 +4,31 @@ All notable changes to this project are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and the project follows [Semantic Versioning](https://semver.org/).
 
+## [3.1.0] - 2026-10-04
+
+### Added
+- When every joined controller player uses the same layout (Xbox, PlayStation or
+  Nintendo), menu and UI prompts show that layout's real buttons instead of the generic
+  icons. The generic icons are used when layouts differ or all are set to Generic.
+- Controls screens follow the shared layout too: the game's own Xbox or PlayStation
+  diagrams, or an unbranded diagram with Nintendo button icons (the game has no
+  Nintendo diagram). Mixed layouts keep the unbranded diagram.
+- *CONTROLLER LAYOUTS* shows a "Players detected" line and only the rows of the players
+  who have joined.
+- A player joining in a slot that was not part of the saved setup gets the most common
+  layout among the other players (tie: Player 1's layout).
+
+### Changed
+- Keyboard players do not affect the "same layout" check.
+- The chalkboard "Player N press [button] / Space to join locally" prompt always uses
+  the generic icon (whoever joins may hold any controller).
+
+### Fixed
+- The "press [button] / Space to rejoin" popup no longer forces the Xbox A icon; it
+  follows the same rule as every other prompt.
+- When a layout lacks an icon in one style, the same layout's other style (or the
+  generic icon) is used instead of falling back to Xbox.
+
 ## [3.0.0] - 2026-10-04
 
 First public release.

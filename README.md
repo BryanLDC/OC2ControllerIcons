@@ -11,11 +11,12 @@ every player uses a different one.
 
 | Area | What changes |
 |---|---|
-| **Menus** | Every button prompt becomes a layout-agnostic icon: four circles (top / left / right / bottom) with the button to press filled in. Bumpers, triggers and sticks follow the same idea. |
-| **Controls screens** | Controller diagrams show an unbranded controller (no logo, empty face buttons). Generated at runtime from the game's own images. |
+| **Menus** | Every button prompt becomes a layout-agnostic icon: four circles (top / left / right / bottom) with the button to press filled in. Bumpers, triggers and sticks follow the same idea. When every joined player uses the same layout, menus show that layout's real buttons instead. |
+| **Controls screens** | Controller diagrams show an unbranded controller (no logo, empty face buttons), generated at runtime from the game's own images. With a shared layout they show the game's Xbox or PlayStation diagram, or Nintendo button icons. |
 | **In-game prompts** | Tutorial and kitchen prompts (*pick up*, *chop*, …) use each player's layout: **Xbox**, **PlayStation**, **Nintendo** (position-correct: bottom = B) or **Generic**. Shared prompts follow the closest chef. |
 | **Player select** | Each player card shows that player's controller (Xbox, DualShock or Pro Controller silhouette). |
-| **Settings** | A native *CONTROLLER LAYOUTS* section at the bottom of *Settings › Game*, with the game's look, navigation and Save/Discard dialog. Localized in the game's 12 languages. |
+| **Settings** | A native *CONTROLLER LAYOUTS* section at the bottom of *Settings › Game*, with the game's look, navigation and Save/Discard dialog. Shows the number of players detected and only their rows. Localized in the game's 12 languages. |
+| **New players** | A controller joining later gets the most common layout of the other players (tie: Player 1's). |
 
 The mod is **disabled by default**, never modifies game files or save data, and each
 patch is applied independently so a future game update can only disable the part it breaks.
@@ -35,7 +36,7 @@ Download the package for your platform from the releases page and follow
 [`docs/README_EN.txt`](docs/README_EN.txt) — it covers Windows, Linux / Steam Deck, macOS,
 configuration and uninstallation step by step.
 
-Quick start (Windows): extract `OC2ControllerIcons_v3.0.0-Windows_Linux.zip` into the
+Quick start (Windows): extract `OC2ControllerIcons_v3.1.0-Windows_Linux.zip` into the
 game folder (next to `Overcooked2.exe`), start the game and enable the mod in
 **Settings › Game › CONTROLLER LAYOUTS**.
 
@@ -53,7 +54,7 @@ In-game: **Settings › Game**, bottom of the list.
 | Option | Values | Default |
 |---|---|---|
 | Universal controller icons | Off / On | Off |
-| Player 1–4 controller | Xbox / PlayStation / Nintendo / Generic | Xbox |
+| Player 1–4 controller (joined players only) | Xbox / PlayStation / Nintendo / Generic | Xbox |
 
 Values are stored in `BepInEx/config/com.oc2mods.controllericons.cfg`.
 

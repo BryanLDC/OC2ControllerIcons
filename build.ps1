@@ -26,7 +26,7 @@ param(
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
 
-$Version         = "3.0.0"
+$Version         = "3.1.0"
 $BepInExVersion  = "5.4.23.2"
 $Csc             = Join-Path $env:WINDIR "Microsoft.NET\Framework\v4.0.30319\csc.exe"
 $Out             = "build\OC2ControllerIcons.dll"

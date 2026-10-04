@@ -12,6 +12,7 @@ namespace OC2ControllerIcons.Patches
     public static class SettingsHeader
     {
         public const string HeaderName = "OC2CI_Header";
+        public const string InfoName = "OC2CI_Players";
         private const string FirstRowName = "OC2CI_Enabled";
         private const BindingFlags Inst = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
@@ -45,11 +46,49 @@ namespace OC2ControllerIcons.Patches
                 StripInteraction(header.gameObject);
                 Style(header, template);
             }
-            // Right before the first mod row (note: moving backwards shifts sibling indices).
-            int h = header.GetSiblingIndex(), f = first.GetSiblingIndex();
-            if (h > f) header.SetSiblingIndex(f);
-            else if (h < f - 1) header.SetSiblingIndex(f - 1);
+            Transform info = content.Find(InfoName);
+            if (info == null)
+            {
+                Transform template = content.Find("ScreenAdjuster");
+                if (template == null) template = first;
+                info = UnityEngine.Object.Instantiate(template.gameObject, content, false).transform;
+                info.name = InfoName;
+                StripInteraction(info.gameObject);
+                StyleInfo(info);
+            }
+
+            // Order: header, "players detected", first mod row.
+            if (header.GetSiblingIndex() != first.GetSiblingIndex() - 2 || info.GetSiblingIndex() != first.GetSiblingIndex() - 1)
+            {
+                header.SetAsLastSibling();
+                info.SetAsLastSibling();
+                int f = first.GetSiblingIndex();
+                header.SetSiblingIndex(f);
+                info.SetSiblingIndex(f + 1);
+            }
             SetText(header, ModStrings.SectionTitle);
+        }
+
+        public static void SetPlayerCount(Transform content, int count)
+        {
+            Transform info = content != null ? content.Find(InfoName) : null;
+            if (info != null) SetText(info, ModStrings.PlayersDetected(count));
+        }
+
+        // Read-only line: same row look, dimmed, so it does not read as an option.
+        private static void StyleInfo(Transform info)
+        {
+            Image bar = info.GetComponent<Image>();
+            if (bar != null)
+            {
+                Color c = bar.color;
+                c.a *= 0.45f;
+                bar.color = c;
+                bar.raycastTarget = false;
+            }
+            Transform title = info.Find("Title");
+            Text text = title != null ? title.GetComponent<Text>() : null;
+            if (text != null) text.fontStyle = FontStyle.Italic;
         }
 
         private static void StripInteraction(GameObject go)

@@ -47,7 +47,7 @@ namespace OC2ControllerIcons.Patches
 
             // Save / Discard / "unsaved changes" handling of the options menu.
             harmony.Patch(AccessTools.Method(typeof(FrontendOptionsMenu), "SaveOptions"),
-                new HarmonyMethod(typeof(SettingsMenuPatch), "CommitPostfix"));
+                new HarmonyMethod(typeof(SettingsMenuPatch), "SavePrefix"));
             harmony.Patch(AccessTools.Method(typeof(OptionsData), "AddToSave"),
                 null, new HarmonyMethod(typeof(SettingsMenuPatch), "CommitPostfix"));
             harmony.Patch(AccessTools.Method(typeof(OptionsData), "LoadFromSave"),
@@ -59,6 +59,13 @@ namespace OC2ControllerIcons.Patches
         private static void CommitPostfix()
         {
             ModSettings.Commit();
+        }
+
+        // Saving from the Settings menu: the players present are the ones this setup is for.
+        private static void SavePrefix()
+        {
+            ModSettings.Commit();
+            ModSettings.MarkConfigured(PlayerSlots.JoinedMask());
         }
 
         private static void RevertPostfix()
@@ -143,7 +150,11 @@ namespace OC2ControllerIcons.Patches
 
         private static void ShowPostfix(FrontendOptionsMenu __instance)
         {
-            if (__instance.m_ScrollView != null) SettingsHeader.Ensure(__instance.m_ScrollView.m_ContentParent);
+            if (__instance.m_ScrollView != null)
+            {
+                SettingsHeader.Ensure(__instance.m_ScrollView.m_ContentParent);
+                UpdatePlayerRows(__instance.m_ScrollView);
+            }
             // Re-apply texts (in case the game re-localized the cloned labels) and values.
             SelectorOption[] selectors = __instance.GetComponentsInChildren<SelectorOption>(true);
             SelectorOption lastRow = null;
@@ -153,9 +164,43 @@ namespace OC2ControllerIcons.Patches
                 if (option == null) continue;
                 SetTitle(selectors[i].gameObject, option.Title);
                 selectors[i].SyncUIWithOption();
+                if (!selectors[i].gameObject.activeSelf) continue;
                 if (lastRow == null || selectors[i].transform.GetSiblingIndex() > lastRow.transform.GetSiblingIndex()) lastRow = selectors[i];
             }
             if (lastRow != null) FixUpNavigation(__instance, lastRow);
+        }
+
+        // Only the rows of players that have joined are shown (all four if nobody has joined),
+        // with the "players detected" line, and up/down navigation is rebuilt over visible rows.
+        private static void UpdatePlayerRows(T17ScrollView scroll)
+        {
+            Transform content = scroll.m_ContentParent;
+            if (content == null) return;
+            int mask = PlayerSlots.JoinedMask();
+            for (int i = 0; i < ModSettings.MaxPlayers; i++)
+            {
+                Transform row = content.Find(RowPrefix + "Player" + (i + 1));
+                if (row != null) row.gameObject.SetActive(mask == 0 || (mask & (1 << i)) != 0);
+            }
+            SettingsHeader.SetPlayerCount(content, PlayerSlots.Count(mask));
+
+            List<Selectable> chain = new List<Selectable>();
+            for (int i = 0; i < content.childCount; i++)
+            {
+                Transform child = content.GetChild(i);
+                if (!child.gameObject.activeSelf) continue;
+                Selectable s = child.GetComponent<Selectable>();
+                if (s != null) chain.Add(s);
+            }
+            Selectable bottom = scroll.m_BorderSelectables.selectOnDown;
+            for (int k = 0; k < chain.Count; k++)
+            {
+                Navigation nav = chain[k].navigation;
+                nav.mode = Navigation.Mode.Explicit;
+                if (k > 0) nav.selectOnUp = chain[k - 1];
+                nav.selectOnDown = k < chain.Count - 1 ? chain[k + 1] : bottom;
+                chain[k].navigation = nav;
+            }
         }
 
         // Cancel/Save have "up" serialized to the last original row:

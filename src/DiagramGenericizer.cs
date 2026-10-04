@@ -1,11 +1,14 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 namespace OC2ControllerIcons
 {
     // Controls diagrams (Controls screen, controller settings panels...) are shown with
-    // an unbranded controller.
+    // an unbranded controller, or with the game's own Xbox / PlayStation diagram when every
+    // joined player uses that layout.
     //
     // No game art is redistributed: at runtime the original Xbox controller sprite is
     // copied, its logo and A/B/X/Y letters are erased and replaced with empty circles
@@ -38,11 +41,14 @@ namespace OC2ControllerIcons
         }
 
         private static readonly Dictionary<string, Spec> s_specs = new Dictionary<string, Spec>();
-        // PS4 variants of the same diagram -> replaced by the generic version of the Xbox one.
-        private static readonly Dictionary<string, string> s_aliases = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> s_psVersion = new Dictionary<string, string>(); // xbox -> ps
+        private static readonly Dictionary<string, string> s_xboxOfPs = new Dictionary<string, string>();  // ps -> xbox
 
-        private static readonly Dictionary<int, Sprite> s_cache = new Dictionary<int, Sprite>(); // original id -> generic (or null)
-        private static readonly Dictionary<Sprite, Sprite> s_originals = new Dictionary<Sprite, Sprite>(); // generic -> original
+        private const string GeneratedSuffix = "_OC2CI";
+        private static readonly Dictionary<int, string> s_familyById = new Dictionary<int, string>(); // sprite id -> xbox name (or null)
+        private static readonly Dictionary<string, Sprite> s_byName = new Dictionary<string, Sprite>();
+        private static readonly Dictionary<int, Sprite> s_generic = new Dictionary<int, Sprite>();  // xbox id -> generic (or null)
+        private static readonly Dictionary<int, Sprite> s_nintendo = new Dictionary<int, Sprite>(); // xbox id -> Nintendo (or null)
 
         static DiagramGenericizer()
         {
@@ -68,55 +74,166 @@ namespace OC2ControllerIcons
             whole.Groups = new FaceGroup[] { new FaceGroup(542.3f, 147.1f, 568.2f, 172.6f, 542.2f, 198f, 516.2f, 172.5f, "") };
             s_specs["UI_ControllerSettingsPanel_06"] = whole;
 
-            s_aliases["Controls_PS4_split"] = "Controls_XB1_split";
-            s_aliases["UI_ControllerSettingsPanel_01"] = "UI_ControllerSettingsPanel_02";
-            s_aliases["UI_ControllerSettingsPanel_05"] = "UI_ControllerSettingsPanel_06";
+            // PlayStation version of each Xbox diagram (shipped in the PC build).
+            s_psVersion["Controls_XB1_split"] = "Controls_PS4_split";
+            s_psVersion["UI_ControllerSettingsPanel_02"] = "UI_ControllerSettingsPanel_01";
+            s_psVersion["UI_ControllerSettingsPanel_06"] = "UI_ControllerSettingsPanel_05";
+            foreach (KeyValuePair<string, string> kv in s_psVersion) s_xboxOfPs[kv.Value] = kv.Key;
         }
 
-        public static bool IsGenerated(Sprite sprite)
-        {
-            return (object)sprite != null && s_originals.ContainsKey(sprite);
-        }
-
-        public static Sprite GetOriginal(Sprite generic)
-        {
-            Sprite original;
-            return s_originals.TryGetValue(generic, out original) ? original : generic;
-        }
-
-        // Returns the generic replacement, or the same sprite if it is not a known diagram.
-        public static Sprite Map(Sprite sprite)
+        // Picks the diagram to show for the current settings, or returns the same sprite if it
+        // is not a known controller diagram:
+        //  - mod disabled, or every joined player on Xbox -> the game's Xbox diagram;
+        //  - every joined player on PlayStation           -> the game's PlayStation diagram;
+        //  - every joined player on Nintendo -> unbranded diagram with the game's Nintendo button
+        //    icons on the face buttons (the game ships no Nintendo diagram);
+        //  - mixed layouts or Generic -> unbranded diagram.
+        public static Sprite Resolve(Sprite sprite)
         {
             if (sprite == null) return sprite;
-            int id = sprite.GetInstanceID();
-            Sprite cached;
-            if (s_cache.TryGetValue(id, out cached)) return cached != null ? cached : sprite;
-
-            Sprite result = null;
-            string name = sprite.name;
+            string xboxName = FamilyOf(sprite);
+            if (xboxName == null) return sprite;
             try
             {
-                Spec spec;
-                string alias;
-                if (s_specs.TryGetValue(name, out spec))
+                Sprite xbox = GetSprite(xboxName);
+                if (xbox == null) return sprite;
+                if (!ModSettings.Enabled) return xbox;
+
+                PadLayout uniform;
+                if (ModSettings.TryGetUniformLayout(out uniform))
                 {
-                    result = Build(sprite, spec);
+                    if (uniform == PadLayout.Xbox) return xbox;
+                    if (uniform == PadLayout.PlayStation)
+                    {
+                        Sprite ps = GetSprite(s_psVersion[xboxName]);
+                        if (ps != null) return ps;
+                    }
+                    if (uniform == PadLayout.Nintendo)
+                    {
+                        Sprite nx = Nintendo(xbox);
+                        if (nx != null) return nx;
+                    }
                 }
-                else if (s_aliases.TryGetValue(name, out alias))
-                {
-                    Sprite xbox = FindLoadedSprite(alias);
-                    if (xbox != null) result = Map(xbox);
-                    if (result == xbox) result = null;
-                }
+                Sprite generic = Generic(xbox);
+                return generic != null ? generic : xbox;
             }
             catch (Exception ex)
             {
-                Plugin.Log.LogWarning("Could not generate generic diagram for " + name + ": " + ex.Message);
-                result = null;
+                Plugin.Log.LogWarning("Diagram selection failed for " + sprite.name + ": " + ex.Message);
+                return sprite;
             }
-            s_cache[id] = result;
-            if (result != null) s_originals[result] = sprite;
-            return result != null ? result : sprite;
+        }
+
+        // Xbox diagram name of the family this sprite belongs to (original, PS or generated), or null.
+        private static string FamilyOf(Sprite sprite)
+        {
+            int id = sprite.GetInstanceID();
+            string family;
+            if (s_familyById.TryGetValue(id, out family)) return family;
+
+            string name = sprite.name;
+            int cut = name.IndexOf(GeneratedSuffix, StringComparison.Ordinal);
+            bool generated = cut >= 0;
+            if (generated) name = name.Substring(0, cut);
+            if (s_specs.ContainsKey(name)) family = name;
+            else if (!s_xboxOfPs.TryGetValue(name, out family)) family = null;
+
+            if (family != null && !generated) s_byName[name] = sprite;
+            s_familyById[id] = family;
+            return family;
+        }
+
+        private static Sprite GetSprite(string name)
+        {
+            Sprite sprite;
+            if (s_byName.TryGetValue(name, out sprite) && sprite != null) return sprite;
+            sprite = FindLoadedSprite(name);
+            if (sprite == null) sprite = LoadFromGameBundles(name);
+            if (sprite != null)
+            {
+                s_byName[name] = sprite;
+                s_familyById[sprite.GetInstanceID()] = s_specs.ContainsKey(name) ? name : s_xboxOfPs[name];
+            }
+            return sprite;
+        }
+
+        private static Sprite Generic(Sprite xbox)
+        {
+            int id = xbox.GetInstanceID();
+            Sprite generic;
+            if (s_generic.TryGetValue(id, out generic)) return generic;
+            generic = null;
+            try
+            {
+                generic = Build(xbox, s_specs[xbox.name], null, "");
+                if (generic != null) s_familyById[generic.GetInstanceID()] = xbox.name;
+            }
+            catch (Exception ex)
+            {
+                Plugin.Log.LogWarning("Could not generate generic diagram for " + xbox.name + ": " + ex.Message);
+            }
+            s_generic[id] = generic;
+            return generic;
+        }
+
+        private static Sprite Nintendo(Sprite xbox)
+        {
+            int id = xbox.GetInstanceID();
+            Sprite nx;
+            if (s_nintendo.TryGetValue(id, out nx)) return nx;
+            nx = null;
+            try
+            {
+                // Face buttons in diagram order: north, east, south, west (Xbox Y, B, A, X).
+                ControllerIconLookup lookup = GameUtils.RequestManager<ControllerIconLookup>();
+                ControlPadInput.Button[] order = { ControlPadInput.Button.Y, ControlPadInput.Button.B, ControlPadInput.Button.A, ControlPadInput.Button.X };
+                IconImage[] icons = new IconImage[4];
+                for (int i = 0; i < 4; i++)
+                {
+                    Sprite icon = IconLibrary.GetForLayout(lookup, order[i], ControllerIconLookup.IconContext.Borderless, PadLayout.Nintendo);
+                    if (icon == null) throw new Exception("Nintendo icon missing for " + order[i]);
+                    icons[i] = IconImage.From(icon);
+                }
+                nx = Build(xbox, s_specs[xbox.name], icons, "_NX");
+                if (nx != null) s_familyById[nx.GetInstanceID()] = xbox.name;
+            }
+            catch (Exception ex)
+            {
+                Plugin.Log.LogWarning("Could not generate Nintendo diagram for " + xbox.name + ": " + ex.Message);
+            }
+            s_nintendo[id] = nx;
+            return nx;
+        }
+
+        // CPU copy of a (GPU-only) sprite, used to stamp button icons onto diagrams.
+        private class IconImage
+        {
+            public Color32[] Px;
+            public int W, H;
+
+            public static IconImage From(Sprite sprite)
+            {
+                Rect r = sprite.textureRect;
+                int w = Mathf.RoundToInt(r.width), h = Mathf.RoundToInt(r.height);
+                Texture2D copy = ReadPixels(sprite.texture, r, w, h);
+                IconImage img = new IconImage();
+                img.Px = copy.GetPixels32();
+                img.W = w;
+                img.H = h;
+                UnityEngine.Object.Destroy(copy);
+                return img;
+            }
+
+            // Bilinear sample with u, v in [0,1], v growing downwards.
+            public Color Sample(float u, float v)
+            {
+                float fx = Mathf.Clamp(u * W - 0.5f, 0, W - 1), fy = Mathf.Clamp((1f - v) * H - 0.5f, 0, H - 1);
+                int x0 = (int)fx, y0 = (int)fy, x1 = Mathf.Min(x0 + 1, W - 1), y1 = Mathf.Min(y0 + 1, H - 1);
+                float tx = fx - x0, ty = fy - y0;
+                Color a = Color.Lerp(Px[y0 * W + x0], Px[y0 * W + x1], tx);
+                Color b = Color.Lerp(Px[y1 * W + x0], Px[y1 * W + x1], tx);
+                return Color.Lerp(a, b, ty);
+            }
         }
 
         private static Sprite FindLoadedSprite(string name)
@@ -129,9 +246,33 @@ namespace OC2ControllerIcons
             return null;
         }
 
+        // The PlayStation diagrams are not used by the PC build, so they may not be loaded yet:
+        // look them up in the asset bundles the game already has open.
+        private static Sprite LoadFromGameBundles(string name)
+        {
+            FieldInfo field = typeof(AssetBundles.AssetBundleManager).GetField("m_LoadedAssetBundles",
+                BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+            IDictionary bundles = field != null ? field.GetValue(null) as IDictionary : null;
+            if (bundles == null) return null;
+            foreach (object value in bundles.Values)
+            {
+                AssetBundles.LoadedAssetBundle loaded = value as AssetBundles.LoadedAssetBundle;
+                if (loaded == null || loaded.m_AssetBundle == null) continue;
+                try
+                {
+                    Sprite sprite = loaded.m_AssetBundle.LoadAsset<Sprite>(name);
+                    if (sprite != null) return sprite;
+                }
+                catch (Exception)
+                {
+                }
+            }
+            return null;
+        }
+
         // --------------------------------------------------------------- generation
 
-        private static Sprite Build(Sprite source, Spec spec)
+        private static Sprite Build(Sprite source, Spec spec, IconImage[] faceIcons, string variant)
         {
             if (source.packed && source.packingRotation != SpritePackingRotation.None) return null;
 
@@ -147,7 +288,7 @@ namespace OC2ControllerIcons
                 Logo l = spec.Logos[i];
                 EraseLogo(c, l.X * sx, l.Y * sy, l.R * sx);
             }
-            for (int i = 0; i < spec.Groups.Length; i++) DrawFaceGroup(c, spec.Groups[i], sx, sy);
+            for (int i = 0; i < spec.Groups.Length; i++) DrawFaceGroup(c, spec.Groups[i], sx, sy, faceIcons);
 
             copy.SetPixels32(px);
             copy.Apply(true, true); // upload to GPU and free the CPU copy
@@ -156,9 +297,9 @@ namespace OC2ControllerIcons
             Vector2 pivot = new Vector2(source.pivot.x / source.rect.width, source.pivot.y / source.rect.height);
             Sprite sprite = Sprite.Create(copy, new Rect(0, 0, w, h), pivot, source.pixelsPerUnit, 0,
                                           SpriteMeshType.FullRect, source.border);
-            sprite.name = source.name + "_OC2CI";
+            sprite.name = source.name + GeneratedSuffix + variant;
             sprite.hideFlags = HideFlags.HideAndDontSave;
-            Plugin.Log.LogInfo("Generic diagram created: " + source.name + " (" + w + "x" + h + ")");
+            Plugin.Log.LogInfo("Diagram created: " + source.name + (variant.Length > 0 ? " (" + variant.Substring(1) + ")" : " (generic)") + " " + w + "x" + h);
             return sprite;
         }
 
@@ -276,7 +417,9 @@ namespace OC2ControllerIcons
             return runs == 1;
         }
 
-        private static void DrawFaceGroup(PixelGrid c, FaceGroup g, float sx, float sy)
+        // faceIcons == null: empty / filled circles. Otherwise the icon for each face button
+        // (north, east, south, west) is stamped over the erased letter.
+        private static void DrawFaceGroup(PixelGrid c, FaceGroup g, float sx, float sy, IconImage[] faceIcons)
         {
             Vector2[] pts = { Scale(g.Y, sx, sy), Scale(g.B, sx, sy), Scale(g.A, sx, sy), Scale(g.X, sx, sy) };
             string[] keys = { "Y", "B", "A", "X" };
@@ -301,6 +444,15 @@ namespace OC2ControllerIcons
                     {
                         float d = Mathf.Sqrt((x - bx) * (x - bx) + (y - by) * (y - by));
                         c.Blend(x, y, disc, Coverage(d, r - 0.5f));
+                        if (faceIcons != null)
+                        {
+                            float size = r * 2.3f;
+                            float u = (x - bx) / size + 0.5f, v = (y - by) / size + 0.5f;
+                            if (u < 0f || u > 1f || v < 0f || v > 1f) continue;
+                            Color ic = faceIcons[i].Sample(u, v);
+                            c.Blend(x, y, ic, ic.a);
+                            continue;
+                        }
                         float wgt = filled
                             ? Coverage(d, ringR)
                             : Mathf.Min(Coverage(d, ringR + stroke / 2f), 1f - Coverage(d, ringR - stroke / 2f));

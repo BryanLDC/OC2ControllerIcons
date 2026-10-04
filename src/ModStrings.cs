@@ -63,6 +63,23 @@ namespace OC2ControllerIcons
             "手柄布局", "コントローラー配置", "컨트롤러 배치", "控制器配置",
         };
 
+        // {0} = number of joined players
+        private static readonly string[] s_playersDetected =
+        {
+            "Players detected: {0}",
+            "Joueurs détectés : {0}",
+            "Giocatori rilevati: {0}",
+            "Erkannte Spieler: {0}",
+            "Jugadores detectados: {0}",
+            "Обнаружено игроков: {0}",
+            "Jogadores detectados: {0}",
+            "Wykryci gracze: {0}",
+            "检测到的玩家：{0}",
+            "検出されたプレイヤー：{0}",
+            "감지된 플레이어: {0}",
+            "偵測到的玩家：{0}",
+        };
+
         private static readonly string[] s_generic =
         {
             "Generic", "Générique", "Generico", "Generisch", "Genérico", "Универсальный",
@@ -89,6 +106,11 @@ namespace OC2ControllerIcons
         public static string[] Layouts
         {
             get { return new string[] { "Xbox", "PlayStation", "Nintendo", s_generic[LanguageIndex()] }; }
+        }
+
+        public static string PlayersDetected(int count)
+        {
+            return string.Format(s_playersDetected[LanguageIndex()], count);
         }
 
         public static string PlayerTitle(int playerNumber)

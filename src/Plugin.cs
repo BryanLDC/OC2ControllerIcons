@@ -29,6 +29,7 @@ namespace OC2ControllerIcons
             host.hideFlags = HideFlags.HideAndDontSave;
             DontDestroyOnLoad(host);
             host.AddComponent<Patches.HoverIconUpdater>();
+            host.AddComponent<PlayerSlotWatcher>();
 
             Log.LogInfo(PluginInfo.NAME + " " + PluginInfo.VERSION + " ready. Enabled=" + ModSettings.Enabled);
         }
@@ -53,6 +54,6 @@ namespace OC2ControllerIcons
     {
         public const string GUID = "com.oc2mods.controllericons";
         public const string NAME = "OC2 Controller Icons";
-        public const string VERSION = "3.0.0";
+        public const string VERSION = "3.1.0";
     }
 }
